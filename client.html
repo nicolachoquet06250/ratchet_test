@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <title>Websockets</title>
+</head>
+<body>
+<button id="send_message">Envoyer un message</button> <span id="nb_messages"></span>
+<div id="board">
+
+</div>
+    <script>
+        window.onload = () => {
+            let pseudo  = prompt('Saisissez votre nom :');
+            let $board = document.querySelector('#board');
+            let $btn    = document.querySelector('#send_message');
+            let $nb_messages = document.querySelector('#nb_messages');
+            $nb_messages.innerHTML = '0';
+
+            let socket = new WebSocket("ws://localhost:2107/chat");
+            socket.onmessage = (e) => {
+                let data = JSON.parse(e.data);
+                if(data.connected === true) {
+                    $board.innerHTML += '<p><b><i>Vous êtes connecté !</i></b></p>';
+                }
+                else {
+                    let me = false;
+                    if(data.user === pseudo) {
+                        me = true;
+                    }
+                    $board.innerHTML += '<p><b>' + (me ? 'Vous' : data.user) + '</b> :<br>' + data.msg + '</p><hr>';
+                    $nb_messages.innerHTML = data.nb_messages;
+                }
+                console.log(e.data);
+            };
+
+            socket.onopen = () => {
+                socket.send(pseudo);
+                $btn.onclick = () => {
+                    socket.send(prompt('Saisissez votre message :'));
+                };
+            }
+        }
+    </script>
+</body>
+</html>

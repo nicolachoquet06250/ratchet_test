@@ -5,14 +5,18 @@
     <title>Websockets</title>
 </head>
 <body>
-<button id="send_message">Envoyer un message</button> <span id="nb_messages"></span>
-<div id="board">
-
-</div>
+<span id="pseudo" style="font-weight: bold;"></span>
+<input type="text" id="ws_message" placeholder="Saisissez votre message ici" autofocus />
+<button id="send_message">Envoyer le message</button>
+<span id="nb_messages"></span>
+<div id="board"></div>
     <script>
         window.onload = () => {
             let pseudo  = prompt('Saisissez votre nom :');
+            let $pseudo = document.querySelector('#pseudo');
+            $pseudo.innerHTML = pseudo + '<hr>';
             let $board = document.querySelector('#board');
+            let $msg = document.querySelector('#ws_message');
             let $btn    = document.querySelector('#send_message');
             let $nb_messages = document.querySelector('#nb_messages');
             $nb_messages.innerHTML = '0';
@@ -34,10 +38,17 @@
                 console.log(e.data);
             };
 
+            $msg.onkeyup = e => {
+                if(e.keyCode === 13) {
+                    $btn.click();
+                }
+            };
+
             socket.onopen = () => {
                 socket.send(pseudo);
                 $btn.onclick = () => {
-                    socket.send(prompt('Saisissez votre message :'));
+                    socket.send($msg.value);
+                    $msg.value = '';
                 };
             }
         }

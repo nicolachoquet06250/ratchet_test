@@ -1,7 +1,5 @@
 <?php
-require __DIR__.'/Ratchet/vendor/autoload.php';
-
-require __DIR__.'src/Chat.php';
+require __DIR__.'/../autoload.php';
 
 // Run the server application through the WebSocket protocol on port 8080
 $app = new Ratchet\App(
